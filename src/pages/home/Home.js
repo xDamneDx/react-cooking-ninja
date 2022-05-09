@@ -1,4 +1,5 @@
-import { useFetch } from "../../hooks/useFetch";
+import { useEffect, useState } from "react";
+import { projectFirestore } from "../../firebase/config";
 
 // Styles:
 import "./Home.css";
@@ -7,11 +8,34 @@ import "./Home.css";
 import RecipeList from "../../components/RecipeList";
 
 export default function Home() {
-  const {
-    data: recipes,
-    isPending,
-    error,
-  } = useFetch("http://localhost:3000/recipes");
+  const [recipes, setRecipes] = useState(null);
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    setIsPending(true);
+
+    projectFirestore
+      .collection("recipes")
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          setError("No recipes to load");
+          setIsPending(false);
+        } else {
+          let results = [];
+          snapshot.docs.forEach((doc) => {
+            results.push({ id: doc.id, ...doc.data() });
+          });
+          setRecipes(results);
+          setIsPending(false);
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
+        setIsPending(false);
+      });
+  }, []);
 
   return (
     <div className="home">
