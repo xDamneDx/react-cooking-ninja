@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import { useTheme } from "../../hooks/useTheme";
 import { projectFirestore } from "../../firebase/config";
 
 // Styles:
@@ -13,6 +14,7 @@ export default function Create() {
   const [ingredients, setIngredients] = useState([]);
   const ingredientInput = useRef();
   const history = useHistory();
+  const { mode } = useTheme();
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -44,7 +46,7 @@ export default function Create() {
   };
 
   return (
-    <div className="create">
+    <div className={`create ${mode}`}>
       <h2 className="page-title">Add a New Recipe</h2>
       <form onSubmit={handleSubmit}>
         <label>
