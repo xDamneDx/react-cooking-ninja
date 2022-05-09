@@ -10,10 +10,13 @@ import Recipe from "./pages/recipe/Recipe";
 
 // Styles:
 import "./App.css";
+import { useTheme } from "./hooks/useTheme";
 
 function App() {
+  const { mode } = useTheme();
+
   return (
-    <div className="App">
+    <div className={`App ${mode}`}>
       <BrowserRouter>
         <Navbar />
         <ThemeSelector />
