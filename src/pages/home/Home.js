@@ -15,10 +15,8 @@ export default function Home() {
   useEffect(() => {
     setIsPending(true);
 
-    projectFirestore
-      .collection("recipes")
-      .get()
-      .then((snapshot) => {
+    const unsub = projectFirestore.collection("recipes").onSnapshot(
+      (snapshot) => {
         if (snapshot.empty) {
           setError("No recipes to load");
           setIsPending(false);
@@ -30,11 +28,14 @@ export default function Home() {
           setRecipes(results);
           setIsPending(false);
         }
-      })
-      .catch((error) => {
+      },
+      (error) => {
         setError(error.message);
         setIsPending(false);
-      });
+      }
+    );
+
+    return () => unsub();
   }, []);
 
   return (
